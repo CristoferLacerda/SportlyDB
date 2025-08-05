@@ -111,8 +111,7 @@ VALUES (1, 'Valéria Nunes', 'Educação Física', 'valerianunes@gmail.com'),
 UPDATE cliente SET telefone = CASE
     WHEN id_cliente = 1 THEN 53991203040
     WHEN id_cliente = 2 THEN 53984234358
-    WHEN id_cliente = 3 THEN 53991445381
+    WHEN id_cliente = 7 THEN 53991445381
     ELSE telefone
 END
-WHERE id_cliente IN (1, 2, 3);
-    
+WHERE id_cliente IN (1, 2, 3);   
