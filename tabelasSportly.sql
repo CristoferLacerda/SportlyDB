@@ -11,6 +11,7 @@ CREATE TABLE cliente(
     cpf CHAR(11) NOT NULL UNIQUE
 );
 
+
 CREATE TABLE endereco (
     id_endereco INT AUTO_INCREMENT PRIMARY KEY,
     id_cliente INT NOT NULL,
@@ -19,7 +20,7 @@ CREATE TABLE endereco (
     bairro VARCHAR(50) NOT NULL,
     cidade VARCHAR(50) NOT NULL,
     estado CHAR(2) NOT NULL,
-    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente) ON DELETE CASCADE
 );
 
 CREATE TABLE curso(
@@ -34,9 +35,11 @@ CREATE TABLE curso(
 CREATE TABLE inscrição_curso(
     id_inscricao INT PRIMARY KEY AUTO_INCREMENT,
     id_curso INT NOT NULL,
+    id_cliente INT NOT NULL,
     data_inscricao DATE NOT NULL,
     situacao ENUM('Ativa', 'Concluida', 'Cancelada') NOT NULL,
-    FOREIGN KEY (id_curso) REFERENCES curso(id_curso)
+    FOREIGN KEY (id_curso) REFERENCES curso(id_curso),
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente) ON DELETE CASCADE
 );
 
 
@@ -59,31 +62,47 @@ CREATE TABLE instrutor(
     FOREIGN KEY (id_curso) REFERENCES curso(id_curso)
 );
 
-CREATE TABLE pedido(
-    id_pedido INT PRIMARY KEY AUTO_INCREMENT,
-    data_pedido DATE NOT NULL,
-    valor_total FLOAT NOT NULL
-);
-
-CREATE TABLE pagamento(
-    id_pagamento INT PRIMARY KEY AUTO_INCREMENT,
-    data_pagamento DATE NOT NULL,
-    valor FLOAT NOT NULL,
-    forma_pagamento VARCHAR(20) NOT NULL
-);
-
-CREATE TABLE produto(
-    id_produto INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(45) NOT NULL,
-    preco FLOAT NOT NULL,
-    estoque INT NOT NULL,
-    descricao VARCHAR(45)
-);
-
 CREATE TABLE categoria_produto(
     id_categoria INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(45) NOT NULL,
     descricao VARCHAR(60)
+);
+
+CREATE TABLE produto(
+    id_produto INT PRIMARY KEY AUTO_INCREMENT,
+    id_categoria INT NOT NULL,
+    nome VARCHAR(45) NOT NULL,
+    preco DECIMAL(10,2) NOT NULL,
+    estoque INT NOT NULL,
+    descricao VARCHAR(45),
+    FOREIGN KEY (id_categoria) REFERENCES categoria_produto(id_categoria)
+);
+
+CREATE TABLE pedido(
+    id_pedido INT PRIMARY KEY AUTO_INCREMENT,
+    id_cliente INT NOT NULL,
+    data_pedido DATE NOT NULL,
+    valor_total DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente) ON DELETE CASCADE
+);
+
+CREATE TABLE pagamento(
+    id_pagamento INT PRIMARY KEY AUTO_INCREMENT,
+    id_pedido INT NOT NULL,
+    data_pagamento DATE NOT NULL,
+    valor DECIMAL(10,2) NOT NULL,
+    forma_pagamento VARCHAR(20) NOT NULL,
+    FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido) ON DELETE CASCADE
+);
+
+CREATE TABLE pedido_produto(
+    id_pedido INT NOT NULL,
+    id_produto INT NOT NULL,
+    quantidade INT NOT NULL,
+    preco_unitario DECIMAL(10,2) NOT NULL,
+    PRIMARY KEY (id_pedido, id_produto),
+    FOREIGN KEY (id_pedido) REFERENCES pedido(id_pedido) ON DELETE CASCADE,
+    FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
 
 INSERT INTO cliente (nome, email, telefone, cpf)
@@ -111,7 +130,7 @@ VALUES (1, 'Valéria Nunes', 'Educação Física', 'valerianunes@gmail.com'),
 UPDATE cliente SET telefone = CASE
     WHEN id_cliente = 1 THEN 53991203040
     WHEN id_cliente = 2 THEN 53984234358
-    WHEN id_cliente = 7 THEN 53991445381
+    WHEN id_cliente = 3 THEN 53991445381
     ELSE telefone
 END
 WHERE id_cliente IN (1, 2, 3);   
