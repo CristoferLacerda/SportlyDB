@@ -1,2 +1,14 @@
+# Node
 node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment
 .env
+
+# Prisma
+/prisma/migrations
+/prisma/dev.db
+
+# Logs
+*.log
