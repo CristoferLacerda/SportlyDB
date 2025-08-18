@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model categoria_produto {
+  id_categoria Int     @id @default(autoincrement())
+  nome         String  @db.VarChar(45)
+  descricao    String? @db.VarChar(60)
+}
+
+model cliente {
+  id_cliente Int     @id @default(autoincrement())
+  nome       String  @db.VarChar(45)
+  email      String  @db.VarChar(60)
+  telefone   String? @db.VarChar(15)
+  cpf        String  @unique(map: "cpf") @db.Char(11)
+}
+
+model curso {
+  id_curso      Int    @id @default(autoincrement())
+  titulo        String @db.VarChar(30)
+  descricao     String @db.VarChar(60)
+  carga_horaria Int    @db.SmallInt
+  link_video    String @db.VarChar(60)
+}
+
+model endereco {
+  id_endereco Int    @id @default(autoincrement())
+  id_cliente  Int
+  rua         String @db.VarChar(100)
+  numero      Int
+  bairro      String @db.VarChar(50)
+  cidade      String @db.VarChar(50)
+  estado      String @db.Char(2)
+
+  @@index([id_cliente], map: "id_cliente")
+}
+
+model esporte {
+  id_esporte Int    @id @default(autoincrement())
+  id_curso   Int
+  nome       String @db.VarChar(45)
+  modalidade String @db.VarChar(30)
+  nivel      String @db.VarChar(20)
+
+  @@index([id_curso], map: "id_curso")
+}
+
+model inscri__o_curso {
+  id_inscricao   Int                      @id @default(autoincrement())
+  id_curso       Int
+  id_cliente     Int
+  data_inscricao DateTime                 @db.Date
+  situacao       inscri__o_curso_situacao
+
+  @@index([id_cliente], map: "id_cliente")
+  @@index([id_curso], map: "id_curso")
+  @@map("inscrição_curso")
+}
+
+model instrutor {
+  id_instrutor  Int    @id @default(autoincrement())
+  id_curso      Int
+  nome          String @db.VarChar(45)
+  especialidade String @db.VarChar(45)
+  email         String @db.VarChar(60)
+
+  @@index([id_curso], map: "id_curso")
+}
+
+model pagamento {
+  id_pagamento    Int      @id @default(autoincrement())
+  id_pedido       Int
+  data_pagamento  DateTime @db.Date
+  valor           Decimal  @db.Decimal(10, 2)
+  forma_pagamento String   @db.VarChar(20)
+
+  @@index([id_pedido], map: "id_pedido")
+}
+
+model pedido {
+  id_pedido   Int      @id @default(autoincrement())
+  id_cliente  Int
+  data_pedido DateTime @db.Date
+  valor_total Decimal  @db.Decimal(10, 2)
+
+  @@index([id_cliente], map: "id_cliente")
+}
+
+model pedido_produto {
+  id_pedido      Int
+  id_produto     Int
+  quantidade     Int
+  preco_unitario Decimal @db.Decimal(10, 2)
+
+  @@id([id_pedido, id_produto])
+  @@index([id_produto], map: "id_produto")
+}
+
+model produto {
+  id_produto   Int     @id @default(autoincrement())
+  id_categoria Int
+  nome         String  @db.VarChar(45)
+  preco        Decimal @db.Decimal(10, 2)
+  estoque      Int
+  descricao    String? @db.VarChar(45)
+
+  @@index([id_categoria], map: "id_categoria")
+}
+
+enum inscri__o_curso_situacao {
+  Ativa
+  Concluida
+  Cancelada
+
+  @@map("inscrição_curso_situacao")
+}
