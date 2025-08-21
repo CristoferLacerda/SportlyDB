@@ -32,7 +32,7 @@ CREATE TABLE curso(
 );
 
 
-CREATE TABLE inscrição_curso(
+CREATE TABLE inscricao_curso(
     id_inscricao INT PRIMARY KEY AUTO_INCREMENT,
     id_curso INT NOT NULL,
     id_cliente INT NOT NULL,

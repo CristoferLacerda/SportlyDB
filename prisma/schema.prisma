@@ -23,10 +23,10 @@ model cliente {
 
 model curso {
   id_curso      Int    @id @default(autoincrement())
-  titulo        String @db.VarChar(30)
-  descricao     String @db.VarChar(60)
+  titulo        String @db.VarChar(150)
+  descricao     String @db.VarChar(200)
   carga_horaria Int    @db.SmallInt
-  link_video    String @db.VarChar(60)
+  link_video    String @db.VarChar(100)
 }
 
 model endereco {
@@ -51,16 +51,23 @@ model esporte {
   @@index([id_curso], map: "id_curso")
 }
 
-model inscri__o_curso {
+
+enum SituacaoInscricaoCurso {
+  Ativa
+  Concluida
+  Cancelada
+}
+
+model inscricaoCurso {
   id_inscricao   Int                      @id @default(autoincrement())
   id_curso       Int
   id_cliente     Int
   data_inscricao DateTime                 @db.Date
-  situacao       inscri__o_curso_situacao
+  situacao       SituacaoInscricaoCurso
 
   @@index([id_cliente], map: "id_cliente")
   @@index([id_curso], map: "id_curso")
-  @@map("inscrição_curso")
+  @@map("inscricao_curso")
 }
 
 model instrutor {
