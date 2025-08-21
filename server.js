@@ -18,7 +18,7 @@ app.post('/usuarios', async (req, res) => {
       cpf: req.body.cpf
     }
   })
-  res.status(201).json(req.body)
+  res.status(201).json({message: "Usuário cadastrado com sucesso!"})
 }); 
 
 
@@ -63,7 +63,7 @@ app.delete('/usuarios/:id', async (req, res) => {
       id_cliente: parseInt(req.params.id, 10)
     }
   })
-  res.status(200).json({ message: " Usuário deletado com Sucesso !"})
+  res.status(200).json({ message: "Usuário deletado com sucesso!"})
 });
 
 
@@ -81,7 +81,7 @@ app.post('/endereco', async (req, res) => {
       estado: req.body.estado
     }
   })
-  res.status(201).json(req.body)
+  res.status(201).json({message: "Endereço cadastrado com sucesso!"})
 }); 
 
 
@@ -132,7 +132,7 @@ app.delete('/endereco/:id', async (req, res) => {
       id_endereco: parseInt(req.params.id, 10)
     }
   })
-  res.status(200).json({ message: " Endereço deletado com Sucesso !"})
+  res.status(200).json({ message: "Endereço deletado com sucesso!"})
 });
 
 
@@ -148,7 +148,7 @@ app.post('/curso', async (req, res) => {
       link_video: req.body.link_video
     }
   })
-  res.status(201).json(res.body)
+  res.status(201).json({message: "Curso cadastrado com sucesso!"})
 });
 
 
@@ -197,7 +197,7 @@ app.delete('/curso/:id', async (req, res) => {
       id_curso: parseInt(req.params.id, 10)
     }
   })
-  res.status(200).json({ message: "Curso deletado com Sucesso !"})
+  res.status(200).json({ message: "Curso deletado com sucesso!"})
 });
 
 
@@ -214,7 +214,7 @@ app.post('/inscricao_curso', async (req, res) => {
       situacao: req.body.situacao
     }
   });
-  res.status(201).json(req.body);
+  res.status(201).json({message: "Inscrição do curso cadastrada com sucesso!"});
 });
 
 
@@ -258,8 +258,130 @@ app.delete('/inscricao_curso/:id', async (req, res) => {
       id_inscricao: parseInt(req.params.id, 10)
     }
   })
-  res.status(200).json({ message: "Inscrição do curso deletado com Sucesso !"})
+  res.status(200).json({message: "Inscrição do curso deletado com sucesso!"})
 });
+
+
+// =======================================================================================================
+
+app.post('/esporte', async (req, res) => {
+  await prisma.esporte.create({
+    data: {
+      id_curso: req.body.id_curso,
+      nome: req.body.nome,
+      modalidade: req.body.modalidade,
+      nivel: req.body.nivel
+    }
+  });
+  res.status(201).json({message: "Esporte cadastrado com sucesso!"});
+});
+
+
+app.get('/esporte', async (req, res) => {
+  let esportes = []
+  if (Object.keys(req.query).length > 0) {
+    esportes = await prisma.esporte.findMany({
+      where: {
+        id_curso: req.query.id_curso ? parseInt(req.query.id_curso) : undefined,
+        nome: req.query.nome,
+        modalidade: req.query.modalidade,
+        nivel: req.query.nivel
+      }
+    })
+  } else {
+    esportes = await prisma.esporte.findMany();
+  }
+  res.status(200).json(esportes)
+});
+
+
+app.put('/esporte/:id', async (req, res) => {
+  const esportes = await prisma.esporte.update({
+    where: {
+      id_esporte: parseInt(req.params.id, 10)
+    },
+    data: {
+      id_curso: req.body.id_curso,
+      nome: req.body.nome,
+      modalidade: req.body.modalidade,
+      nivel: req.body.nivel
+    }
+  });
+  res.status(200).json(esportes);
+});
+
+
+app.delete('/esporte/:id', async (req, res) => {
+  await prisma.esporte.delete({
+    where: {
+      id_esporte: parseInt(req.params.id, 10)
+    }
+  })
+  res.status(200).json({ message: "Esporte deletado com sucesso!"})
+});
+
+
+// =======================================================================================================
+
+
+app.post('/instrutor', async (req, res) => {
+  await prisma.instrutor.create({
+    data: {
+      id_curso: req.body.id_curso,
+      nome: req.body.nome,
+      especialidade: req.body.especialidade,
+      email: req.body.email
+    }
+  });
+  res.status(201).json({message: "Instrutor cadastrado com sucesso!"});
+});
+
+
+app.get('/instrutor', async (req, res) => {
+  let instrutores = []
+  if (Object.keys(req.query).length > 0) {
+    instrutores = await prisma.instrutor.findMany({
+      where: {
+        id_curso: req.query.id_curso ? parseInt(req.query.id_curso) : undefined,
+        nome: req.query.nome,
+        especialidade: req.query.especialidade,
+        email: req.query.email
+      }
+    })
+  } else {
+    instrutores = await prisma.instrutor.findMany();
+  }
+  res.status(200).json(instrutores)
+});
+
+
+app.put('/instrutor/:id', async (req, res) => {
+  const instrutores = await prisma.instrutor.update({
+    where: {
+      id_instrutor: parseInt(req.params.id, 10)
+    },
+    data: {
+      id_curso: req.body.id_curso,
+      nome: req.body.nome,
+      especialidade: req.body.especialidade,
+      email: req.body.email
+    }
+  });
+  res.status(200).json(instrutores);
+});
+
+
+app.delete('/instrutor/:id', async (req, res) => {
+  await prisma.instrutor.delete({
+    where: {
+      id_instrutor: parseInt(req.params.id, 10)
+    }
+  })
+  res.status(200).json({ message: "Instrutor deletado com sucesso!"})
+});
+
+
+// =======================================================================================================
 
 
 const PORT = process.env.PORT || 3000;

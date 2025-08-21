@@ -9,8 +9,8 @@ datasource db {
 
 model categoria_produto {
   id_categoria Int     @id @default(autoincrement())
-  nome         String  @db.VarChar(45)
-  descricao    String? @db.VarChar(60)
+  nome         String  @db.VarChar(100)
+  descricao    String? @db.VarChar(100)
 }
 
 model cliente {
@@ -41,12 +41,19 @@ model endereco {
   @@index([id_cliente], map: "id_cliente")
 }
 
+enum Nivel {
+  Basico @map("Básico")
+  Intermediario @map("Intermediário")
+  Avancado @map("Avançado")
+}
+
+
 model esporte {
   id_esporte Int    @id @default(autoincrement())
   id_curso   Int
-  nome       String @db.VarChar(45)
-  modalidade String @db.VarChar(30)
-  nivel      String @db.VarChar(20)
+  nome       String @db.VarChar(100)
+  modalidade String @db.VarChar(100)
+  nivel      Nivel
 
   @@index([id_curso], map: "id_curso")
 }
