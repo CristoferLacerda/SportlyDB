@@ -1,21 +1,28 @@
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
+import cors from 'cors'
+import bcrypt from "bcryptjs";
+
 
 const prisma = new PrismaClient()
 
 const app = express();
 app.use(express.json())
+app.use(cors())
 
 
 // =======================================================================================================
 
 app.post('/usuarios', async (req, res) => {
+  const senhaHash = await bcrypt.hash(req.body.senha, 10);
+
   await prisma.cliente.create({
     data: {
       nome: req.body.nome,
       email: req.body.email,
       telefone: req.body.telefone,
-      cpf: req.body.cpf
+      cpf: req.body.cpf,
+      senha: senhaHash
     }
   })
   res.status(201).json({message: "Usuário cadastrado com sucesso!"})
@@ -382,6 +389,214 @@ app.delete('/instrutor/:id', async (req, res) => {
 
 
 // =======================================================================================================
+
+
+app.post('/categoria_produto', async (req, res) => {
+  await prisma.categoria_produto.create({
+    data: {
+      id_categoria: req.body.id_categoria,
+      nome: req.body.nome,
+      descricao: req.body.descricao
+    }
+  });
+  res.status(201).json({message: "Categoria do produto adicionada com sucesso!"});
+});
+
+
+app.get('/categoria_produto', async (req, res) => {
+  let categorias = []
+  if (Object.keys(req.query).length > 0) {
+    categorias = await prisma.categoria_produto.findMany({
+      where: {
+        id_categoria: req.query.id_categoria ? parseInt(req.query.id_categoria) : undefined,
+        nome: req.query.nome,
+        descricao: req.query.descricao
+      }
+    })
+  } else {
+    categorias = await prisma.categoria_produto.findMany();
+  }
+  res.status(200).json(categorias)
+});
+
+
+app.put('/categoria_produto/:id', async (req, res) => {
+  const categorias = await prisma.categoria_produto.update({
+    where: {
+      id_categoria: parseInt(req.params.id, 10)
+    },
+    data: {
+      id_categoria: req.body.id_categoria,
+      nome: req.body.nome,
+      descricao: req.body.descricao
+    }
+  });
+  res.status(200).json(categorias);
+});
+
+
+app.delete('/categoria_produto/:id', async (req, res) => {
+  await prisma.categoria_produto.delete({
+    where: {
+      id_categoria: parseInt(req.params.id, 10)
+    }
+  })
+  res.status(200).json({ message: "Categoria deletada com sucesso!"})
+});
+
+
+// =======================================================================================================
+
+
+app.post('/produto', async (req, res) => {
+  await prisma.produto.create({
+    data: {
+      id_categoria: req.body.id_categoria,
+      nome: req.body.nome,
+      preco: req.body.preco,
+      estoque: req.body.estoque,
+      descricao: req.body.descricao
+    }
+  });
+  res.status(201).json({message: "Produto adicionado com sucesso!"});
+});
+
+
+app.get('/produto', async (req, res) => {
+  let produtos = []
+  if (Object.keys(req.query).length > 0) {
+    produtos = await prisma.produto.findMany({
+      where: {
+        id_categoria: req.query.id_categoria ? parseInt(req.query.id_categoria) : undefined,
+        nome: req.query.nome,
+        preco: req.query.preco,
+        estoque: req.query.estoque,
+        descricao: req.query.descricao
+      }
+    })
+  } else {
+    produtos = await prisma.produto.findMany();
+  }
+  res.status(200).json(produtos)
+});
+
+
+app.put('/produto/:id', async (req, res) => {
+  const produtos = await prisma.produto.update({
+    where: {
+      id_produto: parseInt(req.params.id, 10)
+    },
+    data: {
+      id_categoria: req.body.id_categoria,
+      nome: req.body.nome,
+      preco: req.body.preco,
+      estoque: req.body.estoque,
+      descricao: req.body.descricao
+    }
+  });
+  res.status(200).json(produtos);
+});
+
+
+app.delete('/produto/:id', async (req, res) => {
+  await prisma.produto.delete({
+    where: {
+      id_produto: parseInt(req.params.id, 10)
+    }
+  })
+  res.status(200).json({ message: "Produto deletado com sucesso!"})
+});
+
+
+// =======================================================================================================
+
+
+app.post('/pedido', async (req, res) => {
+  await prisma.pedido.create({
+    data: {
+      id_cliente: req.body.id_cliente,
+      data_pedido: req.body.data_pedido,
+      valor_total: req.body.valor_total
+    }
+  });
+  res.status(201).json({message: "Pedido adicionado com sucesso!"});
+});
+
+
+app.get('/pedido', async (req, res) => {
+  let pedidos = []
+  if (Object.keys(req.query).length > 0) {
+    pedidos = await prisma.pedido.findMany({
+      where: {
+        id_cliente: req.query.id_cliente ? parseInt(req.query.id_cliente) : undefined,
+        data_pedido: req.query.data_pedido,
+        valor_total: req.query.valor_total
+      }
+    })
+  } else {
+    pedidos = await prisma.pedido.findMany();
+  }
+  res.status(200).json(pedidos)
+});
+
+
+app.put('/pedido/:id', async (req, res) => {
+  const pedidos = await prisma.pedido.update({
+    where: {
+      id_pedido: parseInt(req.params.id, 10)
+    },
+    data: {
+      id_cliente: req.body.id_cliente,
+      data_pedido: req.body.data_pedido,
+      valor_total: req.body.valor_total
+    }
+  });
+  res.status(200).json(pedidos);
+});
+
+
+app.delete('/pedido/:id', async (req, res) => {
+  await prisma.pedido.delete({
+    where: {
+      id_pedido: parseInt(req.params.id, 10)
+    }
+  })
+  res.status(200).json({ message: "Pedido deletado com sucesso!"})
+});
+
+
+// =======================================================================================================
+
+
+app.post('/pagamento', async (req, res) => {
+  await prisma.pagamento.create({
+    data: {
+      id_pedido: req.body.id_pedido,
+      data_pagamento: req.body.data_pagamento,
+      valor: req.body.valor,
+      forma_pagamento: req.body.forma_pagamento
+    }
+  });
+  res.status(201).json({message: "Pagamento efetuado com sucesso!"});
+});
+
+
+app.get('/pagamento', async (req, res) => {
+  let pagamentos = []
+  if (Object.keys(req.query).length > 0) {
+    pagamentos = await prisma.pagamento.findMany({
+      where: {
+        id_pedido: req.query.id_pedido ? parseInt(req.query.id_pedido) : undefined,
+        data_pagamento: req.query.data_pagamento,
+        valor: req.query.valor,
+        forma_pagamento: req.query.forma_pagamento
+      }
+    })
+  } else {
+    pagamentos = await prisma.pagamento.findMany();
+  }
+  res.status(200).json(pagamentos)
+});
 
 
 const PORT = process.env.PORT || 3000;

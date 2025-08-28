@@ -8,7 +8,8 @@ CREATE TABLE cliente(
     nome VARCHAR(45) NOT NULL,
     email VARCHAR(60) NOT NULL,
     telefone VARCHAR(15),
-    cpf CHAR(11) NOT NULL UNIQUE
+    cpf CHAR(11) NOT NULL UNIQUE,
+    senha VARCHAR(300) NOT NULL
 );
 
 

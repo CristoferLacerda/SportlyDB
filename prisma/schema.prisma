@@ -8,9 +8,9 @@ datasource db {
 }
 
 model categoria_produto {
-  id_categoria Int     @id @default(autoincrement())
-  nome         String  @db.VarChar(100)
-  descricao    String? @db.VarChar(100)
+  id_categoria Int    @id @default(autoincrement())
+  nome         String @db.VarChar(100)
+  descricao    String @db.VarChar(100)
 }
 
 model cliente {
@@ -19,6 +19,7 @@ model cliente {
   email      String  @db.VarChar(60)
   telefone   String? @db.VarChar(15)
   cpf        String  @unique(map: "cpf") @db.Char(11)
+  senha      String  @db.VarChar(300)
 }
 
 model curso {
@@ -41,35 +42,21 @@ model endereco {
   @@index([id_cliente], map: "id_cliente")
 }
 
-enum Nivel {
-  Basico @map("Básico")
-  Intermediario @map("Intermediário")
-  Avancado @map("Avançado")
-}
-
-
 model esporte {
-  id_esporte Int    @id @default(autoincrement())
+  id_esporte Int           @id @default(autoincrement())
   id_curso   Int
-  nome       String @db.VarChar(100)
-  modalidade String @db.VarChar(100)
-  nivel      Nivel
+  nome       String        @db.VarChar(45)
+  modalidade String        @db.VarChar(30)
+  nivel      esporte_nivel
 
   @@index([id_curso], map: "id_curso")
 }
 
-
-enum SituacaoInscricaoCurso {
-  Ativa
-  Concluida
-  Cancelada
-}
-
 model inscricaoCurso {
-  id_inscricao   Int                      @id @default(autoincrement())
+  id_inscricao   Int                    @id @default(autoincrement())
   id_curso       Int
   id_cliente     Int
-  data_inscricao DateTime                 @db.Date
+  data_inscricao DateTime               @db.Date
   situacao       SituacaoInscricaoCurso
 
   @@index([id_cliente], map: "id_cliente")
@@ -122,15 +109,19 @@ model produto {
   nome         String  @db.VarChar(45)
   preco        Decimal @db.Decimal(10, 2)
   estoque      Int
-  descricao    String? @db.VarChar(45)
+  descricao    String? @db.VarChar(100)
 
   @@index([id_categoria], map: "id_categoria")
 }
 
-enum inscri__o_curso_situacao {
+enum SituacaoInscricaoCurso {
   Ativa
   Concluida
   Cancelada
+}
 
-  @@map("inscrição_curso_situacao")
+enum esporte_nivel {
+  Basico
+  Intermediario
+  Avancado
 }
