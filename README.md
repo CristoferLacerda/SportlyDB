@@ -41,31 +41,43 @@ SportlyDB/
 
 1. Clone este repositório:
    
+```bash
    git clone https://github.com/CristoferLacerda/SportlyDB.git
+```
 
-2. Acesse a pasta:
+1. Acesse a pasta:
 
+```Bash
    cd SportlyDB
+```
 
-3. Instale as dependências:
-
+2. Instale as dependências:
+   
+```Bash
    npm install
+```
 
-4. Configure o banco de dados:
+3. Configure o banco de dados:
 
    * Ajuste as variáveis no arquivo `.env`:
-
+     
+```Bash
      DATABASE_URL="file:./dev.db"   # exemplo para SQLite
+```
 
-5. Rode as migrations para criar as tabelas:
+4. Rode as migrations para criar as tabelas:
 
+```Bash
    npx prisma migrate dev
+```
 
-6. Inicie o servidor:
+5. Inicie o servidor:
 
+```Bash
    npm run dev
+```
 
-7. A API ficará disponível em:
+6. A API ficará disponível em:
 
    http://localhost:3000
 
